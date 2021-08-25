@@ -2,10 +2,8 @@
 import json
 import re
 
+from textstada import config
 
-# # if __name__ == "__main__":
-# with importlib.resources.open_text("textstada", "data/common_contractionsta.json") as file:
-#     CONTRACTIONS = json.load(file)
 
 # Additional functions
 # ====================
@@ -134,16 +132,16 @@ def remove_escapes(text):
     return space_sentencestops(text)
 
 
-# @vectorize
-# def replace_contractions(text):
-#     for k, v in CONTRACTIONS.items():
-#         # sub exact matches
-#         rx = rf"(?<=\s)\b({k})\b(?=\s)"
-#         text = re.sub(rx, v, text, flags=re.IGNORECASE)
+@vectorize
+def replace_contractions(text):
+    for k, v in config.CONTRACTIONS.items():
+        # sub exact matches
+        rx = rf"((?<=\s)|^)({k})((?=\s)|$)"
+        text = re.sub(rx, v, text, flags=re.IGNORECASE)
 
-#         # sub words that missed the apostraphy
-#         k = k.replace("'", "")
-#         rx = rf"(?<=\s)\b({k})\b(?=\s)"
-#         text = re.sub(rx, v, text, flags=re.IGNORECASE)
+        # sub words that missed the apostraphy
+        k = k.replace("'", "")
+        rx = rf"((?<=\s)|^)({k})((?=\s)|$)"
+        text = re.sub(rx, v, text, flags=re.IGNORECASE)
 
-#     return text
+    return text
