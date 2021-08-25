@@ -3,8 +3,8 @@ import os
 import sys
 import pytest
 
-root = os.path.abspath(os.path.join(__file__, "../.."))
-sys.path.append(root)
+# root = os.path.abspath(os.path.join(__file__, "../.."))
+# sys.path.append(root)
 
 # pylint: disable=import-error
 import textstada
@@ -116,13 +116,13 @@ def test_add_fullstop():
     run_list_test(f, tests)
 
 
-# def test_replace_contractions():
-#     tests = [
-#         (r"I shouldn't have", "I should not have"),
-#         (r"who'd be", "who would be"),
-#         (r"wouldn't've", "would not have")
-#         ]
-#     f = textstada.replace_contractions
-#     run_test(f, tests)
-#     run_list_test(f, tests)
+def test_replace_contractions():
+    tests = [
+        (r"I shouldn't have", "I should not have"),
+        (r"who'd be", "who would be"),
+        (r"wouldn't've", "would not have")
+        ]
+    f = textstada.replace_contractions
+    run_test(f, tests)
+    run_list_test(f, tests)
 
