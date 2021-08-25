@@ -3,4 +3,4 @@ from . import config
 from .functions import (add_fullstop, remove_bullets, remove_dashes,
                         remove_escapes, remove_numerical_commas,
                         replace_contractions, single_space,
-                        space_sentencestops)
+                        space_sentencestops, clean_quote_chars, replace_latin_abbrevs)

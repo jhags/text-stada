@@ -120,9 +120,31 @@ def test_replace_contractions():
     tests = [
         (r"I shouldn't have", "I should not have"),
         (r"who'd be", "who would be"),
-        (r"wouldn't've", "would not have")
+        (r"wouldn't've", "would not have"),
+        (r"dont be silly", "do not be silly")
         ]
     f = textstada.replace_contractions
     run_test(f, tests)
     run_list_test(f, tests)
 
+
+def test_clean_quote_chars():
+    tests = [
+        (r"‘Some bad quote’ and apos´s", "'Some bad quote' and apos's"),
+        (r"“Bad double quotes”", '"Bad double quotes"')
+        ]
+    f = textstada.clean_quote_chars
+    run_test(f, tests)
+    run_list_test(f, tests)
+
+
+def test_replace_latin_abbrevs():
+    tests = [
+        ("this is e.g. edge. e. g.  be. g.", "this is eg edge. eg  be. g."),
+        ("e.g.", "eg"),
+        ("e.g", "eg"),
+        ("I.E.", "ie")
+        ]
+    f = textstada.replace_latin_abbrevs
+    run_test(f, tests)
+    run_list_test(f, tests)

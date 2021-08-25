@@ -7,10 +7,8 @@ from textstada import config
 
 # Additional functions
 # ====================
-# special appostrafies ´ vs '
 # punctation
 # special characters
-# possessives
 # prefixes
 # remove stopwords (small med and large lists?)
 # spelling corrections
@@ -134,6 +132,7 @@ def remove_escapes(text):
 
 @vectorize
 def replace_contractions(text):
+    """ Replace common contractions (e.g. don't) with full form (e.g. do not). The list of contractions have been derived from wikipedia (see: List of English contractions)."""
     for k, v in config.CONTRACTIONS.items():
         # sub exact matches
         rx = rf"((?<=\s)|^)({k})((?=\s)|$)"
@@ -144,4 +143,35 @@ def replace_contractions(text):
         rx = rf"((?<=\s)|^)({k})((?=\s)|$)"
         text = re.sub(rx, v, text, flags=re.IGNORECASE)
 
+    return text
+
+
+@vectorize
+def clean_quote_chars(text):
+    """ Simply usage of quotations and single apostraphies including (‘ ’ ´) and (“ ”) """
+    rx = r"[‘’´]"
+    text = re.sub(rx, "'", text)
+
+    rx = r"[“”]"
+    text = re.sub(rx, '"', text)
+    return text
+
+
+@vectorize
+def replace_latin_abbrevs(text):
+    """ Replace Latin abbreviations (eg, ie, and NB) with tidier forms (such as: (e.g.|e. g.|e.g) --> eg)"""
+    abr = [r"e\.g\.", r"e\. g\.", r"e\.g"]
+    for i in abr:
+        rx = fr"((?<=\s)|^)({i})((?=\s)|$)"
+        text = re.sub(rx, "eg", text, flags=re.IGNORECASE)
+
+    abr = [r"i\.e\.", r"i\. e\.", r"i\.e"]
+    for i in abr:
+        rx = fr"((?<=\s)|^)({i})((?=\s)|$)"
+        text = re.sub(rx, "ie", text, flags=re.IGNORECASE)
+
+    abr = [r"n\.b\.", r"n\. b\.", r"n\.b"]
+    for i in abr:
+        rx = fr"((?<=\s)|^)({i})((?=\s)|$)"
+        text = re.sub(rx, "nb", text, flags=re.IGNORECASE)
     return text
