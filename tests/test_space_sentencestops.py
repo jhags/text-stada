@@ -98,3 +98,31 @@ def test_remove_escapes():
     f = textstada.remove_escapes
     run_test(f, tests)
     run_list_test(f, tests)
+
+
+def test_add_fullstop():
+    tests = [
+        ('hello world', 'hello world.'),
+        ('hello world.', 'hello world.'),
+        ('hello world ', 'hello world.'),
+        ('hello world. ', 'hello world.'),
+        ('hello world?', 'hello world?'),
+        ('hello world;::', 'hello world.'),
+        ('hello world!;::', 'hello world!'),
+        ('hello world - ', 'hello world.')
+        ]
+    f = textstada.add_fullstop
+    run_test(f, tests)
+    run_list_test(f, tests)
+
+
+# def test_replace_contractions():
+#     tests = [
+#         (r"I shouldn't have", "I should not have"),
+#         (r"who'd be", "who would be"),
+#         (r"wouldn't've", "would not have")
+#         ]
+#     f = textstada.replace_contractions
+#     run_test(f, tests)
+#     run_list_test(f, tests)
+

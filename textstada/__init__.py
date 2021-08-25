@@ -1,1 +1,5 @@
-from .functions import space_sentencestops, remove_numerical_commas, remove_dashes, single_space, remove_bullets, remove_escapes
+
+from .functions import (add_fullstop, remove_bullets, remove_dashes,
+                        remove_escapes, remove_numerical_commas,
+                        single_space,
+                        space_sentencestops)

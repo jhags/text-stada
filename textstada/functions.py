@@ -1,7 +1,14 @@
 
+import json
 import re
 
+
+# # if __name__ == "__main__":
+# with importlib.resources.open_text("textstada", "data/common_contractionsta.json") as file:
+#     CONTRACTIONS = json.load(file)
+
 # Additional functions
+# ====================
 # special appostrafies ´ vs '
 # punctation
 # special characters
@@ -13,11 +20,12 @@ import re
 # list all text between quotes e.g. "lorum ipsum"
 # abbriviations such as e.g. or i.e. or N.B. --> eg, ie, NB
 
-def vectorize(func):
-    def wrapper(x):
+
+def vectorize(func, **args):
+    def wrapper(x, **args):
         if isinstance(x, list):
-            return [func(i) for i in x]
-        return func(x)
+            return [func(i, **args) for i in x]
+        return func(x, **args)
     return wrapper
 
 
@@ -41,6 +49,19 @@ def space_sentencestops(text, stop_chars=".;!?,:"):
     rx = fr"((?<=[a-zA-Z0-9])\s{{1,}}(?=[{stop_chars}]))"
     text = re.sub(rx, '', text)
 
+    return text
+
+
+@vectorize
+def add_fullstop(text, stop_chars='.?!', replace_chars=';:,-/'):
+    """ Add a fullstop to the end of a string if it does not exist """
+    text = text.strip()
+    if replace_chars is not None:
+        if text[-1] in replace_chars:
+            text = text[0:-1]
+            return add_fullstop(text, stop_chars=stop_chars, replace_chars=replace_chars)
+    if text[-1] not in stop_chars:
+        text+='.'
     return text
 
 
@@ -96,16 +117,9 @@ def replace_acronyms(text, acronyms):
     return ' '.join(text.split())
 
 
-# def check_fullstops(text):
-#     t = []
-#     for sent in sent_tokenize(text):
-#         if sent[-1] not in '.,?!': sent+='.'
-#         t.append(sent)
-#     return ' '.join(t)
-
-
 @vectorize
 def remove_escapes(text):
+    """ Remove escape characters and replace with fullstop except if the escape is at the start of a string. """
     escapes = [r'\n', r'\t', r'\r']
     text = text.strip()
     for escape in escapes:
@@ -119,3 +133,17 @@ def remove_escapes(text):
     text = text.strip()
     return space_sentencestops(text)
 
+
+# @vectorize
+# def replace_contractions(text):
+#     for k, v in CONTRACTIONS.items():
+#         # sub exact matches
+#         rx = rf"(?<=\s)\b({k})\b(?=\s)"
+#         text = re.sub(rx, v, text, flags=re.IGNORECASE)
+
+#         # sub words that missed the apostraphy
+#         k = k.replace("'", "")
+#         rx = rf"(?<=\s)\b({k})\b(?=\s)"
+#         text = re.sub(rx, v, text, flags=re.IGNORECASE)
+
+#     return text
