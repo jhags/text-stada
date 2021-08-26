@@ -1,13 +1,8 @@
 
-import os
-import sys
 import pytest
 
-# root = os.path.abspath(os.path.join(__file__, "../.."))
-# sys.path.append(root)
-
-# pylint: disable=import-error
 import textstada
+
 
 def msg(t, e, r):
     return f"\nTested:   '{t}'\nExpected: '{e}'\nReceived: '{r}'\n"
@@ -146,5 +141,16 @@ def test_replace_latin_abbrevs():
         ("I.E.", "ie")
         ]
     f = textstada.replace_latin_abbrevs
+    run_test(f, tests)
+    run_list_test(f, tests)
+
+
+def test_remove_pronouns():
+    tests = [
+        ("He went", "went"),
+        ("what he wanted", "what wanted"),
+        ("they've needed.", "have needed.")
+        ]
+    f = textstada.remove_pronouns
     run_test(f, tests)
     run_list_test(f, tests)

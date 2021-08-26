@@ -175,3 +175,15 @@ def replace_latin_abbrevs(text):
         rx = fr"((?<=\s)|^)({i})((?=\s)|$)"
         text = re.sub(rx, "nb", text, flags=re.IGNORECASE)
     return text
+
+
+@vectorize
+def remove_pronouns(text):
+    """ Remove pronouns from text """
+    text = replace_contractions(text)
+
+    for pronoun in config.PRONOUNS:
+        rx = rf"\b({pronoun})\b"
+        text = re.sub(rx, '', text, flags=re.IGNORECASE)
+
+    return single_space(text)
