@@ -25,7 +25,10 @@ setup(
     ],
     packages=find_packages(include=['textstada', 'textstada.*']),
     package_data={
-        "textstada": ["data/*.json"]
+        "textstada": [
+            "data/*.json",
+            "data/*.txt"
+            ]
     },
     install_requires=required,
     tests_require=['pytest', 'pytest-cov', 'coveralls'],
