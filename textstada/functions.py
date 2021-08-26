@@ -178,11 +178,19 @@ def replace_latin_abbrevs(text):
 
 
 @vectorize
-def remove_pronouns(text):
+def remove_pronouns(text, pronouns='default'):
     """ Remove pronouns from text """
+    if pronouns=='default':
+        pronouns = config.PRONOUNS
+
+    else:
+        if not isinstance(pronouns, list):
+            arg_type = type(pronouns)
+            raise TypeError(f"pronouns arguement expecting a list but received {arg_type}")
+
     text = replace_contractions(text)
 
-    for pronoun in config.PRONOUNS:
+    for pronoun in pronouns:
         rx = rf"\b({pronoun})\b"
         text = re.sub(rx, '', text, flags=re.IGNORECASE)
 
