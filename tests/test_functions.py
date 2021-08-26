@@ -154,3 +154,13 @@ def test_remove_pronouns():
     f = textstada.remove_pronouns
     run_test(f, tests)
     run_list_test(f, tests)
+
+
+def test_remove_punctuation():
+    tests = [
+        ('This is [a] "string". Hello world!', "This is a string . Hello world!"),
+        ('{some} tricky/weird% (chars)', "some tricky weird% (chars)")
+        ]
+    f = textstada.remove_punctuation
+    run_test(f, tests)
+    run_list_test(f, tests)

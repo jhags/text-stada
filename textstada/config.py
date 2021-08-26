@@ -13,3 +13,6 @@ def load_pronouns():
 
 CONTRACTIONS = load_contractions()
 PRONOUNS = load_pronouns()
+
+PUNCT_ALL = '!"#$£€%&\'()*+,-./:;<=>?@[\\]^_`{|}~©™•_”~[]¦¬'
+PUNCT_BASIC = '.?!()%&'
