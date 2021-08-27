@@ -7,21 +7,19 @@ from textstada import config
 
 # Additional functions
 # ====================
-# punctation
-# special characters
 # prefixes
 # remove stopwords (small med and large lists?)
 # spelling corrections
 # list all acronyms (utils)
 # list all text between quotes e.g. "lorum ipsum"
-# abbriviations such as e.g. or i.e. or N.B. --> eg, ie, NB
+# remove un-opened or un-closed brackets
 
 
-def vectorize(func, **args):
-    def wrapper(x, **args):
+def vectorize(func, *args, **kwargs):
+    def wrapper(x, *args, **kwargs):
         if isinstance(x, list):
-            return [func(i, **args) for i in x]
-        return func(x, **args)
+            return [func(i, *args, **kwargs) for i in x]
+        return func(x, *args, **kwargs)
     return wrapper
 
 
@@ -104,13 +102,15 @@ def remove_bullets(text):
     return space_sentencestops(text)
 
 
-def replace_acronyms(text, acronyms):
-    for k, v in acronyms.items():
+@vectorize
+def replace_tokens(text, values):
+    """ Replace tokens as specified in a passed dictionary {k: [v1, v2, v]} where tokens v in the text will be replaced by token k. """
+    for k, v in values.items():
         for i in v:
             rx = rf"\b({i})\b"
             text = re.sub(rx, k, text, flags=re.IGNORECASE)
 
-    return ' '.join(text.split())
+    return text
 
 
 @vectorize

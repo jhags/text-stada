@@ -7,16 +7,16 @@ import textstada
 def msg(t, e, r):
     return f"\nTested:   '{t}'\nExpected: '{e}'\nReceived: '{r}'\n"
 
-def run_test(func, tests):
+def run_test(func, tests, *args, **kwargs):
     for test, expected in tests:
-        output = func(test)
+        output = func(test, *args, **kwargs)
         assert output == expected, msg(test, expected, output)
 
-def run_list_test(func, tests):
+def run_list_test(func, tests, *args, **kwargs):
     # Test lists as inputs
     test = [i[0] for i in tests]
     expected = [i[1] for i in tests]
-    output = func(test)
+    output = func(test, *args, **kwargs)
     assert output == expected, msg(test, expected, output)
 
 
@@ -164,3 +164,17 @@ def test_remove_punctuation():
     f = textstada.remove_punctuation
     run_test(f, tests)
     run_list_test(f, tests)
+
+
+def test_replace_tokens():
+    tests = [
+        ('Hi world', "hello world"),
+        ('hey earth', "hello world")
+        ]
+    vals = {
+        "hello": ["hi", "hey"],
+        "world": ["earth"]
+    }
+    f = textstada.replace_tokens
+    run_test(f, tests, vals)
+    run_list_test(f, tests, vals)
