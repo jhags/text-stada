@@ -107,7 +107,7 @@ def replace_tokens(text, values):
     """ Replace tokens as specified in a passed dictionary {k: [v1, v2, v]} where tokens v in the text will be replaced by token k. """
     for k, v in values.items():
         for i in v:
-            rx = rf"((?<=[^\-])|^)({i})((?=\s|[^\-])|$)"
+            rx = rf"(^|(?<=[^\-]))(\b({i})\b)((?=[^\-])|$)"
             text = re.sub(rx, k, text, flags=re.IGNORECASE)
 
     return text

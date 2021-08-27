@@ -170,7 +170,8 @@ def test_replace_tokens():
     tests = [
         ('Hi world', "hello world"),
         ('hey earth', "hello world"),
-        ('re re. re-do (re). re - re!', 'reg reg. re-do (reg). reg - reg!')
+        ('re re. re-bad (re). re - re! re-re. more mOre. regard re re1 1re! re-1 1-re.',
+        'reg reg. re-bad (reg). reg - reg! re-re. more mOre. regard reg re1 1re! re-1 1-re.')
         ]
     vals = {
         "hello": ["hi", "hey"],
