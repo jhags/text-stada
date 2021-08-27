@@ -169,11 +169,13 @@ def test_remove_punctuation():
 def test_replace_tokens():
     tests = [
         ('Hi world', "hello world"),
-        ('hey earth', "hello world")
+        ('hey earth', "hello world"),
+        ('re re. re-do (re). re - re!', 'reg reg. re-do (reg). reg - reg!')
         ]
     vals = {
         "hello": ["hi", "hey"],
-        "world": ["earth"]
+        "world": ["earth"],
+        "reg": ["re"]
     }
     f = textstada.replace_tokens
     run_test(f, tests, vals)
