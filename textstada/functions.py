@@ -1,6 +1,7 @@
 
 import json
 import re
+from functools import wraps
 
 from textstada import config
 
@@ -16,6 +17,8 @@ from textstada import config
 
 
 def vectorize(func, *args, **kwargs):
+    # Enable lists, Pandas Series, Numpy arrays
+    @wraps(func) # Need this to preserve function signatures and docstrings
     def wrapper(x, *args, **kwargs):
         if isinstance(x, list):
             return [func(i, *args, **kwargs) for i in x]
@@ -138,7 +141,7 @@ def replace_contractions(text):
         rx = rf"((?<=\s)|^)({k})((?=\s)|$)"
         text = re.sub(rx, v, text, flags=re.IGNORECASE)
 
-        # sub words that missed the apostraphy
+        # sub words that missed the apostraphy eg theyve rather than they've
         k = k.replace("'", "")
         rx = rf"((?<=\s)|^)({k})((?=\s)|$)"
         text = re.sub(rx, v, text, flags=re.IGNORECASE)
@@ -148,7 +151,7 @@ def replace_contractions(text):
 
 @vectorize
 def clean_quote_chars(text):
-    """ Simply usage of quotations and single apostraphies including (‘ ’ ´) and (“ ”) """
+    """ Simplify usage of quotations and single apostraphies including (‘ ’ ´) and (“ ”) """
     rx = r"[‘’´]"
     text = re.sub(rx, "'", text)
 
@@ -221,3 +224,57 @@ def remove_punctuation(text, remove='all', keep='basic'):
         text = re.sub(rx, " ", text)
 
     return single_space(text)
+
+
+@vectorize
+def strip_stopwords(text, stopwords, from_start=True, from_end=True, remove_digits=False, trim_punc=True):
+    """Remove stopwords from text string.
+
+    Args:
+        text (str or list): text to be cleaned.
+        stopwords (list): list of stopwords to be removed
+        from_start (bool, optional): Remove only stopwords from the start of text - continue until a non-stopword is found. Defaults to True.
+        from_end (bool, optional): Remove only stopwords from the end of text - continue until a non-stopword is found. Defaults to True.
+        remove_digits (bool, optional): Remove any encountered digits from the start or end.
+        trim_punc (bool, optional): remove any punctuation encountered.
+
+    Returns:
+        str or list: cleaned text.
+    """
+
+    if from_start:
+        if trim_punc:
+            if text[0] in config.PUNCT_ALL:
+                text = text[1:].strip()
+                return strip_stopwords(text, stopwords, from_start=from_start, from_end=from_end, remove_digits=remove_digits, trim_punc=trim_punc)
+
+        if remove_digits:
+            if text[0].isdigit():
+                text = text[1:].strip()
+                return strip_stopwords(text, stopwords, from_start=from_start, from_end=from_end, remove_digits=remove_digits, trim_punc=trim_punc)
+
+        rx = r"^([\w\-]+)"
+        match = re.findall(rx, text)[0]
+        if match.lower() in stopwords:
+            text = text.replace(match, "", 1).strip()
+            return strip_stopwords(text, stopwords, from_start=from_start, from_end=from_end, remove_digits=remove_digits, trim_punc=trim_punc)
+
+    if from_end:
+        if trim_punc:
+            if text[-1] in config.PUNCT_ALL:
+                text = text[:-1].strip()
+                return strip_stopwords(text, stopwords, from_start=from_start, from_end=from_end, remove_digits=remove_digits, trim_punc=trim_punc)
+
+        if remove_digits:
+            if text[-1].isdigit():
+                text = text[:-1].strip()
+                return strip_stopwords(text, stopwords, from_start=from_start, from_end=from_end, remove_digits=remove_digits, trim_punc=trim_punc)
+
+        rx = r"([\w\-]+)$"
+        rx_match = re.finditer(rx, text)
+        match, idx = [(x.group(0), x.start()) for x in rx_match][0]
+        if match.lower() in stopwords:
+            text = text[:idx].strip()
+            return strip_stopwords(text, stopwords, from_start=from_start, from_end=from_end, remove_digits=remove_digits, trim_punc=trim_punc)
+
+    return text

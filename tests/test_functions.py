@@ -181,3 +181,36 @@ def test_replace_tokens():
     f = textstada.replace_tokens
     run_test(f, tests, vals)
     run_list_test(f, tests, vals)
+
+
+def test_strip_stopwords():
+
+    stopwords = ['i', 'say', 'to', 'you']
+
+    tests = [
+        ("I say 'Hello world' to you", "Hello world' to you"),
+        ("(1) I say 'Hello world' to you!", "Hello world' to you!"),
+        ]
+
+    f = textstada.strip_stopwords
+    run_test(f, tests, stopwords, **{"from_start": True, "from_end": False, "remove_digits": True, "trim_punc": True})
+    run_list_test(f, tests, stopwords, **{"from_start": True, "from_end": False, "remove_digits": True, "trim_punc": True})
+
+    tests = [
+        ("I say 'Hello world' to you", "I say 'Hello world"),
+        ("(1) I say 'Hello world' to you!", "(1) I say 'Hello world"),
+        ]
+
+    f = textstada.strip_stopwords
+    run_test(f, tests, stopwords, **{"from_start": False, "from_end": True, "remove_digits": True, "trim_punc": True})
+    run_list_test(f, tests, stopwords, **{"from_start": False, "from_end": True, "remove_digits": True, "trim_punc": True})
+
+    tests = [
+        ("I say 'Hello world' to you", "Hello world"),
+        ("(1) I say 'Hello world' to you!", "Hello world"),
+        ]
+
+    f = textstada.strip_stopwords
+    run_test(f, tests, stopwords, **{"from_start": True, "from_end": True, "remove_digits": True, "trim_punc": True})
+    run_list_test(f, tests, stopwords, **{"from_start": True, "from_end": True, "remove_digits": True, "trim_punc": True})
+
