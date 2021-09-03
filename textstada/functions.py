@@ -242,6 +242,9 @@ def strip_stopwords(text, stopwords, from_start=True, from_end=True, remove_digi
         str or list: cleaned text.
     """
 
+    if text=="":
+        return text
+
     if from_start:
         if trim_punc:
             if text[0] in config.PUNCT_ALL:

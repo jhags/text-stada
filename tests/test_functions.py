@@ -208,6 +208,7 @@ def test_strip_stopwords():
     tests = [
         ("I say 'Hello world' to you", "Hello world"),
         ("(1) I say 'Hello world' to you!", "Hello world"),
+        ("I say to you!", "")
         ]
 
     f = textstada.strip_stopwords
