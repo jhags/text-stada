@@ -1,4 +1,4 @@
-
+import re
 import pytest
 
 import textstada
@@ -190,28 +190,34 @@ def test_strip_stopwords():
     tests = [
         ("I say 'Hello world' to you", "Hello world' to you"),
         ("(1) I say 'Hello world' to you!", "Hello world' to you!"),
+        ("1st I say 'Hello world' to you!", "Hello world' to you!")
         ]
 
     f = textstada.strip_stopwords
-    run_test(f, tests, stopwords, **{"from_start": True, "from_end": False, "remove_digits": True, "trim_punc": True})
-    run_list_test(f, tests, stopwords, **{"from_start": True, "from_end": False, "remove_digits": True, "trim_punc": True})
+    options = {"from_start": True, "from_end": False, "remove_numeric_tokens": True, "trim_punc": True}
+    run_test(f, tests, stopwords, **options)
+    run_list_test(f, tests, stopwords, **options)
 
     tests = [
         ("I say 'Hello world' to you", "I say 'Hello world"),
         ("(1) I say 'Hello world' to you!", "(1) I say 'Hello world"),
+        ("1st I say 'Hello world' to you 2nd!", "1st I say 'Hello world")
         ]
 
     f = textstada.strip_stopwords
-    run_test(f, tests, stopwords, **{"from_start": False, "from_end": True, "remove_digits": True, "trim_punc": True})
-    run_list_test(f, tests, stopwords, **{"from_start": False, "from_end": True, "remove_digits": True, "trim_punc": True})
+    options = {"from_start": False, "from_end": True, "remove_numeric_tokens": True, "trim_punc": True}
+    run_test(f, tests, stopwords, **options)
+    run_list_test(f, tests, stopwords, **options)
 
     tests = [
         ("I say 'Hello world' to you", "Hello world"),
         ("(1) I say 'Hello world' to you!", "Hello world"),
-        ("I say to you!", "")
+        ("I say to you!", ""),
+        ("1st I say 'Hello world' to you 2nd!", "Hello world")
         ]
 
     f = textstada.strip_stopwords
-    run_test(f, tests, stopwords, **{"from_start": True, "from_end": True, "remove_digits": True, "trim_punc": True})
-    run_list_test(f, tests, stopwords, **{"from_start": True, "from_end": True, "remove_digits": True, "trim_punc": True})
+    options = {"from_start": True, "from_end": True, "remove_numeric_tokens": True, "trim_punc": True}
+    run_test(f, tests, stopwords, **options)
+    run_list_test(f, tests, stopwords, **options)
 

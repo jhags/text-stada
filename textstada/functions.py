@@ -227,7 +227,7 @@ def remove_punctuation(text, remove='all', keep='basic'):
 
 
 @vectorize
-def strip_stopwords(text, stopwords, from_start=True, from_end=True, remove_digits=False, trim_punc=True):
+def strip_stopwords(text, stopwords, from_start=True, from_end=True, remove_numeric_tokens=False, trim_punc=True):
     """Remove stopwords from text string.
 
     Args:
@@ -235,7 +235,7 @@ def strip_stopwords(text, stopwords, from_start=True, from_end=True, remove_digi
         stopwords (list): list of stopwords to be removed
         from_start (bool, optional): Remove only stopwords from the start of text - continue until a non-stopword is found. Defaults to True.
         from_end (bool, optional): Remove only stopwords from the end of text - continue until a non-stopword is found. Defaults to True.
-        remove_digits (bool, optional): Remove any encountered digits from the start or end.
+        remove_numeric_tokens (bool, optional): Remove any token that contains one or more digits from the start or end.
         trim_punc (bool, optional): remove any punctuation encountered.
 
     Returns:
@@ -245,39 +245,43 @@ def strip_stopwords(text, stopwords, from_start=True, from_end=True, remove_digi
     if text=="":
         return text
 
+    re_hasdigits = re.compile(r"\d")
+
     if from_start:
         if trim_punc:
             if text[0] in config.PUNCT_ALL:
                 text = text[1:].strip()
-                return strip_stopwords(text, stopwords, from_start=from_start, from_end=from_end, remove_digits=remove_digits, trim_punc=trim_punc)
-
-        if remove_digits:
-            if text[0].isdigit():
-                text = text[1:].strip()
-                return strip_stopwords(text, stopwords, from_start=from_start, from_end=from_end, remove_digits=remove_digits, trim_punc=trim_punc)
+                return strip_stopwords(text, stopwords, from_start=from_start, from_end=from_end, remove_numeric_tokens=remove_numeric_tokens, trim_punc=trim_punc)
 
         rx = r"^([\w\-]+)"
         match = re.findall(rx, text)[0]
+
+        if remove_numeric_tokens:
+            if re_hasdigits.search(match) is not None:
+                text = text.replace(match, "", 1).strip()
+                return strip_stopwords(text, stopwords, from_start=from_start, from_end=from_end, remove_numeric_tokens=remove_numeric_tokens, trim_punc=trim_punc)
+
         if match.lower() in stopwords:
             text = text.replace(match, "", 1).strip()
-            return strip_stopwords(text, stopwords, from_start=from_start, from_end=from_end, remove_digits=remove_digits, trim_punc=trim_punc)
+            return strip_stopwords(text, stopwords, from_start=from_start, from_end=from_end, remove_numeric_tokens=remove_numeric_tokens, trim_punc=trim_punc)
 
     if from_end:
         if trim_punc:
             if text[-1] in config.PUNCT_ALL:
                 text = text[:-1].strip()
-                return strip_stopwords(text, stopwords, from_start=from_start, from_end=from_end, remove_digits=remove_digits, trim_punc=trim_punc)
-
-        if remove_digits:
-            if text[-1].isdigit():
-                text = text[:-1].strip()
-                return strip_stopwords(text, stopwords, from_start=from_start, from_end=from_end, remove_digits=remove_digits, trim_punc=trim_punc)
+                return strip_stopwords(text, stopwords, from_start=from_start, from_end=from_end, remove_numeric_tokens=remove_numeric_tokens, trim_punc=trim_punc)
 
         rx = r"([\w\-]+)$"
         rx_match = re.finditer(rx, text)
         match, idx = [(x.group(0), x.start()) for x in rx_match][0]
+
+        if remove_numeric_tokens:
+            if re_hasdigits.search(match) is not None:
+                text = text.replace(match, "", 1).strip()
+                return strip_stopwords(text, stopwords, from_start=from_start, from_end=from_end, remove_numeric_tokens=remove_numeric_tokens, trim_punc=trim_punc)
+
         if match.lower() in stopwords:
             text = text[:idx].strip()
-            return strip_stopwords(text, stopwords, from_start=from_start, from_end=from_end, remove_digits=remove_digits, trim_punc=trim_punc)
+            return strip_stopwords(text, stopwords, from_start=from_start, from_end=from_end, remove_numeric_tokens=remove_numeric_tokens, trim_punc=trim_punc)
 
     return text
