@@ -113,10 +113,11 @@ def test_add_fullstop():
 
 def test_replace_contractions():
     tests = [
-        (r"I shouldn't have", "I should not have"),
-        (r"who'd be", "who would be"),
-        (r"wouldn't've", "would not have"),
-        (r"dont be silly", "do not be silly")
+        ("I shouldn't have", "I should not have"),
+        ("who'd be", "who would be"),
+        ("wouldn't've", "would not have"),
+        ("dont be silly", "do not be silly"),
+        ("I'll not replace well nor ill", "I will not replace well nor ill")
         ]
     f = textstada.replace_contractions
     run_test(f, tests)

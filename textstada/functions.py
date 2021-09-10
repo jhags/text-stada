@@ -142,9 +142,10 @@ def replace_contractions(text):
         text = re.sub(rx, v, text, flags=re.IGNORECASE)
 
         # sub words that missed the apostraphy eg theyve rather than they've
-        k = k.replace("'", "")
-        rx = rf"((?<=\s)|^)({k})((?=\s)|$)"
-        text = re.sub(rx, v, text, flags=re.IGNORECASE)
+        if k.lower() not in config.CONTRACTIONS_EXCEPTIONS:
+            k = k.replace("'", "")
+            rx = rf"((?<=\s)|^)({k})((?=\s)|$)"
+            text = re.sub(rx, v, text, flags=re.IGNORECASE)
 
     return text
 
