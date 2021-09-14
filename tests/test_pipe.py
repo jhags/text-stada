@@ -20,11 +20,12 @@ def test_pipeline():
         "some other text 100000. eg 100. they have."
     ]
 
-    pipe = Pipeline(tests, textstada.FULLMONTY, verbose=True)
+    pipe = Pipeline(textstada.FULLMONTY, verbose=True)
+    pipe.text_input = tests
     pipe.run()
     assert pipe.text_output==expected
 
 
-    pipe = Pipeline(tests[1], textstada.FULLMONTY, verbose=True)
+    pipe = Pipeline(textstada.FULLMONTY, text=tests[1], verbose=True)
     pipe.run()
     assert pipe.text_output==expected[1]
