@@ -64,10 +64,11 @@ def test_remove_dashes():
         ('hello - world', 'hello  world'),
         ('hello - - world', 'hello   world'),
         ('hello -  - world', 'hello    world'),
-        ('hello-  world', 'hello-  world'),
+        ('hello  world', 'hello  world'),
         ('hello  – - world', 'hello    world'),
         ('- hello world', ' hello world'),
-        ('1-to-1', '1-to-1')
+        ('1-to-1', '1-to-1'),
+        ('hello:-world', 'hello: world')
     ]
     f = textstada.remove_dashes
     run_test(f, tests)
@@ -87,8 +88,8 @@ def test_remove_bullets():
 
 def test_remove_escapes():
     tests = [
-        (r' \n hello world \n hello world', 'hello world. hello world'),
-        (r'\r hello world \t', 'hello world.'),
+        (' \n hello world \n hello world', 'hello world.  hello world'),
+        ('\r hello world \t', 'hello world'),
     ]
     f = textstada.remove_escapes
     run_test(f, tests)
@@ -222,3 +223,17 @@ def test_strip_stopwords():
     run_test(f, tests, stopwords, **options)
     run_list_test(f, tests, stopwords, **options)
 
+
+def test_remove_duplicate_sentencestops():
+    tests = [
+        ('hello. world.', 'hello. world.'),
+        ('hello.. world.', 'hello. world.'),
+        ('hello. . world', 'hello. world'),
+        ('hello... world', 'hello. world'),
+        ('hello. . . . world.', 'hello. world.'),
+        ('hello!! ?? . . world.', 'hello! ? . world.'),
+        ('hello!!??.. world.', 'hello!?. world.')
+    ]
+    f = textstada.remove_duplicate_sentencestops
+    run_test(f, tests)
+    run_list_test(f, tests)

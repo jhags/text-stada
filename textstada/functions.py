@@ -39,7 +39,7 @@ def space_sentencestops(text, stop_chars=".;!?,:"):
     """ Space end of sentence punctuation marks e.g. Bad stop.Good stop. --> Bad stop. Good stop. And remove spaces before end marks e.g. Bad .Good --> Bad. Good."""
     # Add a single space after each stop character
     for c in stop_chars:
-        rx = rf"(\{c}(?=[a-zA-Z]))"
+        rx = f"(\\{c}(?=[a-zA-Z]))"
         text = re.sub(rx, f"{c} ", text)
 
     # Remove the preceding space before a stop charater
@@ -84,9 +84,18 @@ def remove_dashes(text):
     rx = r"((?<=\s){1,}\-{1,}(?=\s){1,})"
     text = re.sub(rx, "", text)
 
+    # space dashes that follow any non-whitespace and followed by a whitespace
+    # eg hello- world --> hello world
+    rx = r"((?<=[\S])\-(?=\s))"
+    text = re.sub(rx, "", text)
+
     # Remove dashes at the start of a string
     rx = r"(^\-(?=\s){1,})"
     text = re.sub(rx, "", text)
+
+    # Remove dashes that follow a sentence stop
+    rx = r"((?<=[^a-zA-Z0-9])\-(?=[a-zA-Z|\d]))"
+    text = re.sub(rx, " ", text)
     return text
 
 
@@ -119,15 +128,15 @@ def replace_tokens(text, values):
 @vectorize
 def remove_escapes(text):
     """ Remove escape characters and replace with fullstop except if the escape is at the start of a string. """
-    escapes = [r'\n', r'\t', r'\r']
+    escapes = ['\\n', '\\t', '\\r']
     text = text.strip()
     for escape in escapes:
-        rx = fr"^\{escape}"
+        rx = f"^{escape}"
         text = re.sub(rx, ' ', text)
 
     for escape in escapes:
-        rx = fr"\{escape}"
-        text = re.sub(rx, '.', text)
+        rx = f"{escape}"
+        text = re.sub(rx, '. ', text)
 
     text = text.strip()
     return space_sentencestops(text)
@@ -221,7 +230,7 @@ def remove_punctuation(text, remove='all', keep='basic'):
             chars+=c
 
     for c in chars:
-        rx = fr"(\{c})"
+        rx = f"(\\{c})"
         text = re.sub(rx, " ", text)
 
     return single_space(text)
@@ -285,4 +294,25 @@ def strip_stopwords(text, stopwords, from_start=True, from_end=True, remove_nume
             text = text[:idx].strip()
             return strip_stopwords(text, stopwords, from_start=from_start, from_end=from_end, remove_numeric_tokens=remove_numeric_tokens, trim_punc=trim_punc)
 
+    return text
+
+
+@vectorize
+def remove_duplicate_sentencestops(text, stop_chars=".;!?:"):
+    """Remove duplicate sentence stops eg hello world... --> hello world.
+
+    Args:
+        text (str or list): text to be cleaned.
+        stop_chars (str, optional): Sentence stop characters to check for duplicates. Defaults to ".;!?:".
+    """
+    # First remove spaces between duplicates stop characters
+    # eg hello . . world --> hello .. world
+    for c in stop_chars:
+        rx = f"(?<=\\{c})\s(?=\\{c})"
+        text = re.sub(rx, "", text)
+
+    # Then remove duplicates (if 2 or more consequtive)
+    for c in stop_chars:
+        rx = f"\\{c}{{2,}}"
+        text = re.sub(rx, f"{c}", text)
     return text
