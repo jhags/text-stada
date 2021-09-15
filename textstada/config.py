@@ -26,7 +26,6 @@ CONTRACTIONS_EXCEPTIONS = load_contraction_exceptions()
 PRONOUNS = load_pronouns()
 
 PUNCT_ALL = '!"#$£€%&\'()*+,-./:;<=>?@[\\]^_`{|}~©™•_”~[]¦¬'
-PUNCT_BASIC = '.,?!()%&'
 
 # Pipeline
 FULLMONTY = [
