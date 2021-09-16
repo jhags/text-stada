@@ -101,16 +101,18 @@ def remove_dashes(text):
 
 @vectorize
 def remove_bullets(text):
-    """ Remove bullet characters and replace with fullstop. """
+    """ Remove bullet characters and replace with fullstop. ●•·"""
+    bullets = ['○', '●', '•', '·']
     # Remove bullets at start of string and replace with space
     text = text.strip()
-    rx = r"^\•"
-    text = re.sub(rx, ' ', text)
+    for c in bullets:
+        rx = f"^\\{c}"
+        text = re.sub(rx, ' ', text)
 
-    # remove any other bullet and replace with fullstop
-    rx = r"\•"
-    text = re.sub(rx, '.', text)
-    text = text.strip()
+        # remove any other bullet and replace with fullstop
+        rx = f"\\{c}"
+        text = re.sub(rx, '.', text)
+        text = text.strip()
     return space_sentencestops(text)
 
 

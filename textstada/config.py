@@ -25,7 +25,7 @@ CONTRACTIONS = load_contractions()
 CONTRACTIONS_EXCEPTIONS = load_contraction_exceptions()
 PRONOUNS = load_pronouns()
 
-PUNCT_ALL = '!"#$£€%&\'()*+,-./:;<=>?@[\\]^_`{|}~©™•_”~[]¦¬'
+PUNCT_ALL = '!"#$£€%&\'()*+,-./:;<=>?@[\\]^_`{|}~©™•_”~[]¦¬¿●·±®○«»°，'
 
 # Pipeline
 FULLMONTY = [

@@ -79,7 +79,10 @@ def test_remove_bullets():
     tests = [
         ('• hello world', 'hello world'),
         (' • hello world', 'hello world'),
-        ('• hello world  • hello world', 'hello world. hello world')
+        ('• hello world  • hello world', 'hello world. hello world'),
+        ('○ hello world', 'hello world'),
+        ('● hello world', 'hello world'),
+        ('· hello world.', 'hello world.')
     ]
     f = textstada.remove_bullets
     run_test(f, tests)
