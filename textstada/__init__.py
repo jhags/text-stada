@@ -8,3 +8,4 @@ from .functions import (add_fullstop, clean_quote_chars, remove_bullets,
                         replace_tokens, single_space, space_sentencestops,
                         strip_stopwords)
 from .pipe import Pipeline
+from . import utils

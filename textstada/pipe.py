@@ -8,12 +8,32 @@ import textstada
 
 
 class Pipeline:
-    def __init__(self, steps, text=None, verbose=False):
+    def __init__(self, pipe, text=None, verbose=False):
+        self.pipe = pipe
         self.text_input = text
-        self.steps = steps
+        self.steps = None
+        self._kwargs = None
+        self._get_steps_params()
         self._steps = self._evaluate_steps()
         self._verbose = verbose
         self.text_output = None
+
+
+    def _get_steps_params(self):
+        steps = []
+        kwargs = []
+        for k, v in self.pipe.items():
+            step = v.get('step')
+            kwarg = v.get('kwargs', {})
+
+            if step is None:
+                raise ValueError(f"Function not defined in step: ({k}).")
+
+            steps.append(v['step'])
+            kwargs.append(kwarg)
+
+        self.steps = steps
+        self._kwargs = kwargs
 
 
     def _evaluate_steps(self):
@@ -36,26 +56,9 @@ class Pipeline:
         if t is None:
             raise ValueError("Please add text to 'self.text_input' before running pipe.")
 
-        for step in tqdm(self._steps, disable=not self._verbose):
-            t = self._run_func(t, step)
+        funcs = zip(self._steps, self._kwargs)
+
+        for step, kwarg in tqdm(funcs, disable=not self._verbose):
+            t = self._run_func(t, step, **kwarg)
+
         self.text_output = t
-
-
-    def save_pipe(self, filepath):
-        output = {}
-        for i, f in enumerate(self._steps):
-            sig = inspect.signature(f)
-
-            kwargs = {}
-            for p in sig.parameters.values():
-                arg = p.name
-                val = p.default
-                if val is not p.empty:
-                    kwargs[arg] = val
-
-            output[i] = {
-                "step": f.__name__,
-                "kwargs": kwargs
-            }
-
-        return json.dump(output, open(filepath, 'w'))

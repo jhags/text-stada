@@ -21,6 +21,12 @@ def load_pronouns():
     with importlib.resources.open_text(data, "pronouns.txt") as file:
         return file.read().split()
 
+
+def load_fullmonty_pipeline():
+    with importlib.resources.open_text(data, "fullmonty.json") as file:
+        return json.load(file)
+
+
 CONTRACTIONS = load_contractions()
 CONTRACTIONS_EXCEPTIONS = load_contraction_exceptions()
 PRONOUNS = load_pronouns()
@@ -28,16 +34,4 @@ PRONOUNS = load_pronouns()
 PUNCT_ALL = '!"#$£€%&\'()*+,-./:;<=>?@[\\]^_`{|}~©™•_”~[]¦¬¿●·±®○«»°，'
 
 # Pipeline
-FULLMONTY = [
-    'replace_latin_abbrevs',
-    'space_sentencestops',
-    'clean_quote_chars',
-    'replace_contractions',
-    'add_fullstop',
-    'remove_dashes',
-    'remove_bullets',
-    'remove_numerical_commas',
-    'remove_punctuation',
-    'space_sentencestops',
-    'single_space'
-]
+FULLMONTY = load_fullmonty_pipeline()
