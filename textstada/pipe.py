@@ -8,7 +8,7 @@ import textstada
 
 
 class Pipeline:
-    def __init__(self, pipe, text=None, verbose=False):
+    def __init__(self, text=None, pipe=None, verbose=False):
         self.pipe = pipe
         self.text_input = text
         self.steps = None
