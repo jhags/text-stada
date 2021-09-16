@@ -11,7 +11,7 @@ with open('README.md') as f:
 
 setup(
     name='textstada',
-    version='0.0.1',
+    version='0.0.2',
     description='No frills text data cleaning methods. Stada means to tidy in Swedish.',
     long_description=readme,
     long_description_content_type="text/md",
